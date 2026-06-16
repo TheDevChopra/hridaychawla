@@ -15,7 +15,7 @@ const containerVariants = {
 };
 
 export default function GamingHub() {
-  const { items, loading, addItem, updateItem, deleteItem } = useHubItems("gaming");
+  const { items, loading, isAuthenticated, addItem, updateItem, deleteItem } = useHubItems("gaming");
   
   const [modalOpen, setModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
@@ -47,16 +47,18 @@ export default function GamingHub() {
       <section className={styles.section} key={sectionKey}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <h2 className={styles.sectionTitle} style={{ margin: 0 }}>{title}</h2>
-          <button className="glass-button" onClick={() => openAddModal(sectionKey)}>
-            <Plus size={16} /> Add Game
-          </button>
+          {isAuthenticated && (
+            <button className="glass-button" onClick={() => openAddModal(sectionKey)}>
+              <Plus size={16} /> Add Game
+            </button>
+          )}
         </div>
         
         {loading ? (
           <p style={{ color: "rgba(255,255,255,0.5)" }}>Loading...</p>
         ) : sectionItems.length === 0 ? (
           <div className="glass-panel" style={{ padding: "40px", textAlign: "center", color: "rgba(255,255,255,0.5)" }}>
-            No games added yet. Click "Add Game" to get started!
+            No games found. {isAuthenticated && "Click \"Add Game\" to get started!"}
           </div>
         ) : (
           <motion.div className={styles.grid} variants={containerVariants} initial="hidden" animate="show">
@@ -70,8 +72,8 @@ export default function GamingHub() {
                 tags={game.tags || []}
                 actionLabel="Play Now" 
                 imagePlaceholder={game.title.slice(0, 2).toUpperCase()}
-                onEdit={() => openEditModal(game)}
-                onDelete={() => deleteItem(game.id)}
+                onEdit={isAuthenticated ? () => openEditModal(game) : undefined}
+                onDelete={isAuthenticated ? () => deleteItem(game.id) : undefined}
               />
             ))}
           </motion.div>

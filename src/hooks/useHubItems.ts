@@ -16,24 +16,23 @@ export interface HubItem {
 export function useHubItems(hubName: string) {
   const [items, setItems] = useState<HubItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [sessionUser, setSessionUser] = useState<any>(null);
 
   useEffect(() => {
-    fetchItems();
+    checkAuthAndFetch();
   }, [hubName]);
 
-  const fetchItems = async () => {
+  const checkAuthAndFetch = async () => {
     setLoading(true);
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      setLoading(false);
-      return;
-    }
+    setIsAuthenticated(!!session);
+    setSessionUser(session?.user || null);
 
     const { data, error } = await supabase
       .from("hub_items")
       .select("*")
       .eq("hub", hubName)
-      .eq("user_id", session.user.id)
       .order("created_at", { ascending: true });
 
     if (error) {
@@ -45,12 +44,11 @@ export function useHubItems(hubName: string) {
   };
 
   const addItem = async (itemData: Omit<HubItem, "id" | "user_id">) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return null;
+    if (!sessionUser) return null;
 
     const { data, error } = await supabase
       .from("hub_items")
-      .insert([{ ...itemData, user_id: session.user.id }])
+      .insert([{ ...itemData, user_id: sessionUser.id }])
       .select()
       .single();
 
@@ -64,6 +62,8 @@ export function useHubItems(hubName: string) {
   };
 
   const updateItem = async (id: string, updates: Partial<HubItem>) => {
+    if (!sessionUser) return null;
+    
     const { data, error } = await supabase
       .from("hub_items")
       .update(updates)
@@ -81,6 +81,8 @@ export function useHubItems(hubName: string) {
   };
 
   const deleteItem = async (id: string) => {
+    if (!sessionUser) return false;
+    
     const { error } = await supabase
       .from("hub_items")
       .delete()
@@ -95,5 +97,5 @@ export function useHubItems(hubName: string) {
     return true;
   };
 
-  return { items, loading, addItem, updateItem, deleteItem, fetchItems };
+  return { items, loading, isAuthenticated, addItem, updateItem, deleteItem, fetchItems: checkAuthAndFetch };
 }

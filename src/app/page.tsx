@@ -27,14 +27,10 @@ export default function Home() {
   }, []);
 
   const fetchRecentHubItems = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
-    // Fetch the 4 most recently added items across any hub
+    // Fetch the 4 most recently added items across any hub globally
     const { data } = await supabase
       .from('hub_items')
       .select('*')
-      .eq('user_id', session.user.id)
       .order('created_at', { ascending: false })
       .limit(4);
 

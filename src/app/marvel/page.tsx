@@ -15,7 +15,7 @@ const containerVariants = {
 };
 
 export default function MarvelHub() {
-  const { items, loading, addItem, updateItem, deleteItem } = useHubItems("marvel");
+  const { items, loading, isAuthenticated, addItem, updateItem, deleteItem } = useHubItems("marvel");
   
   const [modalOpen, setModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
@@ -47,16 +47,18 @@ export default function MarvelHub() {
       <section className={styles.section} key={sectionKey}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <h2 className={styles.sectionTitle} style={{ margin: 0 }}>{title}</h2>
-          <button className="glass-button" onClick={() => openAddModal(sectionKey)}>
-            <Plus size={16} /> Add Item
-          </button>
+          {isAuthenticated && (
+            <button className="glass-button" onClick={() => openAddModal(sectionKey)}>
+              <Plus size={16} /> Add Item
+            </button>
+          )}
         </div>
         
         {loading ? (
           <p style={{ color: "rgba(255,255,255,0.5)" }}>Loading...</p>
         ) : sectionItems.length === 0 ? (
           <div className="glass-panel" style={{ padding: "40px", textAlign: "center", color: "rgba(255,255,255,0.5)" }}>
-            No items added yet. Click "Add Item" to get started!
+            No items found. {isAuthenticated && "Click \"Add Item\" to get started!"}
           </div>
         ) : (
           <motion.div className={styles.grid} variants={containerVariants} initial="hidden" animate="show">
@@ -70,8 +72,8 @@ export default function MarvelHub() {
                 tags={item.tags || []}
                 actionLabel="Explore" 
                 imagePlaceholder={item.title.slice(0, 2).toUpperCase()}
-                onEdit={() => openEditModal(item)}
-                onDelete={() => deleteItem(item.id)}
+                onEdit={isAuthenticated ? () => openEditModal(item) : undefined}
+                onDelete={isAuthenticated ? () => deleteItem(item.id) : undefined}
               />
             ))}
           </motion.div>
