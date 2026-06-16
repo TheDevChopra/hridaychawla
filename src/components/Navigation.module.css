@@ -74,33 +74,112 @@
   transform: translateX(5px);
 }
 
+/* Mobile specific elements hidden on desktop */
+.mobileMenuBtn {
+  display: none;
+}
+
+.mobileMenuOverlay {
+  display: none;
+}
+
 @media (max-width: 768px) {
+  /* Hide desktop sidebar entirely */
   .navContainer {
-    top: auto;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-  }
-
-  .navBar {
-    flex-direction: row;
-    justify-content: space-around;
-    padding: 12px 24px;
-    gap: 0;
-  }
-
-  .logo {
     display: none;
   }
 
-  .navLinks {
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-between;
+  /* Show floating action button (3-dots) */
+  .mobileMenuBtn {
+    display: flex;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: white;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
   }
 
-  .tooltip {
-    display: none;
+  .mobileMenuBtn:active {
+    transform: scale(0.92);
   }
+
+  /* Fullscreen Glassmorphic Overlay */
+  .mobileMenuOverlay {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 1001;
+    flex-direction: column;
+    padding: 30px;
+    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mobileCloseBtn {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: rgba(255,255,255,0.1);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .mobileMenuHeader {
+    margin-top: 50px;
+    margin-bottom: 40px;
+    text-align: left;
+  }
+
+  .mobileNavLinks {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    padding-bottom: 40px;
+  }
+
+  .mobileNavItem {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255,255,255,0.8);
+    font-size: 1.3rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .mobileNavItem.mobileActive {
+    background: var(--accent-color);
+    color: white;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    border-color: transparent;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
 }
