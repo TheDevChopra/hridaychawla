@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Navigation from "@/components/Navigation";
 import styles from "./Settings.module.css";
-import { Palette, User, Download, Save, Bell, Lock, Image as ImageIcon } from "lucide-react";
+import { Palette, User, Download, Save, Bell, Lock, Image as ImageIcon, RotateCcw } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { defaultHubItems } from "@/lib/defaultData";
 
 const themes = [
   { id: "dark", name: "Dark Default", color: "#3b82f6" },
@@ -100,6 +101,23 @@ export default function SettingsHub() {
 
     if (error) alert("Error saving profile: " + error.message);
     else alert("Profile saved successfully!");
+  };
+
+  const handleRestoreDefaults = async () => {
+    if (!session) {
+      alert("Please sign in from the Vault page first to restore data.");
+      return;
+    }
+    
+    const itemsToInsert = defaultHubItems.map(item => ({
+      ...item,
+      user_id: session.user.id
+    }));
+
+    const { error } = await supabase.from('hub_items').insert(itemsToInsert);
+    
+    if (error) alert("Error restoring defaults: " + error.message);
+    else alert("Defaults restored successfully! Your hubs are fully populated again.");
   };
 
   return (
@@ -212,8 +230,9 @@ export default function SettingsHub() {
               <Download size={24} className={styles.icon} />
               <h2>Data Management</h2>
             </div>
-            <p className={styles.description}>Export or backup your encrypted vault and playlists.</p>
+            <p className={styles.description}>Restore default app data or export your settings.</p>
             <div className={styles.actions}>
+              <button className="glass-button" onClick={handleRestoreDefaults}><RotateCcw size={16} /> Restore Default Cards</button>
               <button className="glass-button" onClick={handleExport}>Export JSON</button>
               <button className={`glass-button ${styles.dangerBtn}`}>Clear All Data</button>
             </div>
