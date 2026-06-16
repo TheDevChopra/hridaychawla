@@ -1,0 +1,255 @@
+.mainContainer {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
+
+.contentArea {
+  flex: 1;
+  margin-left: 100px;
+  padding: 40px;
+  padding-bottom: 100px;
+}
+
+.header {
+  margin-bottom: 48px;
+}
+
+.headerFlex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.title {
+  font-size: 3.5rem;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.1rem;
+}
+
+.securityDashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 56px;
+}
+
+.dashboardCard {
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  gap: 20px;
+}
+
+.iconSafe {
+  color: #10b981;
+}
+
+.iconWarning {
+  color: #f59e0b;
+}
+
+.dashboardInfo h3 {
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+.dashboardInfo p {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.9rem;
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  border-left: 4px solid var(--accent-color);
+  padding-left: 16px;
+}
+
+.authSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+}
+
+.authCard {
+  width: 100%;
+  max-width: 450px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.authActions {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.authActions button {
+  flex: 1;
+  justify-content: center;
+}
+
+.authError {
+  color: #ef4444;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th, .table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.table th {
+  background: rgba(255, 255, 255, 0.05);
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+}
+
+.tableRow:last-child td {
+  border-bottom: none;
+}
+
+.tableRow:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.categoryCell {
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.passwordCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: monospace;
+  font-size: 1.1rem;
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconBtn:hover {
+  color: #fff;
+}
+
+.actionBtn {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  width: 100%;
+  max-width: 500px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.passwordInputGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.generateBtn {
+  flex-shrink: 0;
+}
+
+.strengthMeter {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.weak { color: #ef4444; }
+.medium { color: #f59e0b; }
+.strong { color: #10b981; }
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+@media (max-width: 768px) {
+  .contentArea {
+    margin-left: 0;
+    padding: 24px;
+    padding-bottom: 120px;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+  }
+}
