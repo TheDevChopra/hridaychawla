@@ -70,7 +70,7 @@ export default function Home() {
                 <Card 
                   key={item.id}
                   title={item.title}
-                  subtitle={`${item.hub.toUpperCase()} • ${item.section}`}
+                  subtitle={item.hub ? `${item.hub.toUpperCase()} • ${item.section}` : item.section}
                   imageUrl={item.image_url}
                   rating={item.rating?.toString()}
                   tags={item.tags}

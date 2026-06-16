@@ -24,7 +24,7 @@ export default function Card({
   imagePlaceholder = "Image",
   imageUrl,
   rating,
-  tags = [],
+  tags,
   actionLabel = "View",
   onEdit,
   onDelete,
@@ -85,7 +85,7 @@ export default function Card({
         <h3 className={styles.title}>{title}</h3>
         {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
         
-        {tags.length > 0 && (
+        {tags && tags.length > 0 && (
           <div className={styles.tags}>
             {tags.map((tag, idx) => (
               <span key={idx} className={styles.tag}>{tag}</span>
