@@ -47,5 +47,5 @@ BEGIN
     INSERT INTO public.hub_items (user_id, hub, section, title, subtitle, tags, image_url) VALUES
     (first_user, 'playlists', 'categories', 'Workout', 'High Energy', ARRAY['Gym', 'Pump'], 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48'),
     (first_user, 'playlists', 'categories', 'Gaming', 'Focus & Flow', ARRAY['Lo-Fi', 'EDM'], 'https://images.unsplash.com/photo-1542751371-adc38448a05e');
-
+done.
 END $$;

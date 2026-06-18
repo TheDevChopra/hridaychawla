@@ -158,6 +158,22 @@
   font-size: 1.1rem;
 }
 
+.actionsCell {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.deleteBtn {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444;
+}
+
+.deleteBtn:hover {
+  background: rgba(239, 68, 68, 0.3) !important;
+}
+
+
 .iconBtn {
   background: none;
   border: none;
@@ -245,11 +261,39 @@
 @media (max-width: 768px) {
   .contentArea {
     margin-left: 0;
-    padding: 24px;
+    padding: 16px;
     padding-bottom: 120px;
   }
   
   .title {
-    font-size: 2.5rem;
+    font-size: 2rem;
+  }
+  
+  .headerFlex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tableContainer {
+    border-radius: 8px;
+  }
+
+  .table th, .table td {
+    padding: 12px 10px;
+    font-size: 0.9rem;
+  }
+  
+  .passwordCell {
+    font-size: 0.9rem;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .actionText {
+    display: none;
+  }
+  
+  .actionBtn {
+    padding: 8px;
   }
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Shield, Key, Copy, Plus, AlertTriangle, Eye, EyeOff, LogIn, UserPlus } from "lucide-react";
+import { Shield, Key, Copy, Plus, AlertTriangle, Eye, EyeOff, LogIn, UserPlus, Edit, Trash2 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import styles from "./Vault.module.css";
 import { encryptData, decryptData, generatePassword, checkPasswordStrength } from "@/lib/encryption";
@@ -21,9 +21,47 @@ const defaultCategories = ["Snapchat", "Roblox", "Instagram", "Gmail", "Discord"
 export default function VaultHub() {
   const [entries, setEntries] = useState<VaultEntry[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [newEntry, setNewEntry] = useState({ category: "Snapchat", username: "", password: "" });
   const [showPasswords, setShowPasswords] = useState<{ [key: string]: boolean }>({});
   const [generatedPassword, setGeneratedPassword] = useState("");
+
+  const closeModal = () => {
+    setShowAddModal(false);
+    setEditingId(null);
+    setNewEntry({ category: "Snapchat", username: "", password: "" });
+    setGeneratedPassword("");
+  };
+
+  const openEditModal = (entry: VaultEntry) => {
+    const encryptedStr = entry.encrypted_data || entry.encryptedPassword || "";
+    const decrypted = decryptData(encryptedStr);
+    
+    setEditingId(entry.id);
+    setNewEntry({
+      category: entry.category,
+      username: entry.username,
+      password: decrypted
+    });
+    setShowAddModal(true);
+  };
+
+  const handleDeleteEntry = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this account?")) return;
+    
+    const { error } = await supabase
+      .from('vault_entries')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', session.user.id);
+      
+    if (error) {
+      console.error("Delete error:", error.message);
+      alert("Error deleting entry.");
+    } else {
+      setEntries(entries.filter(e => e.id !== id));
+    }
+  };
 
   // Auth State
   const [session, setSession] = useState<any>(null);
@@ -80,25 +118,45 @@ export default function VaultHub() {
     
     const encryptedStr = encryptData(newEntry.password);
 
-    const { data, error } = await supabase
-      .from('vault_entries')
-      .insert([
-        {
-          user_id: session.user.id,
+    if (editingId) {
+      const { data, error } = await supabase
+        .from('vault_entries')
+        .update({
           category: newEntry.category,
           username: newEntry.username,
           encrypted_data: encryptedStr
-        }
-      ])
-      .select();
-    
-    if (error) {
-      console.error("Insert error:", error.message);
-      alert("Error saving to database. Did you run the SQL schema in Supabase?");
-    } else if (data) {
-      setEntries([...entries, data[0]]);
-      setShowAddModal(false);
-      setNewEntry({ category: "Snapchat", username: "", password: "" });
+        })
+        .eq('id', editingId)
+        .eq('user_id', session.user.id)
+        .select();
+        
+      if (error) {
+        console.error("Update error:", error.message);
+        alert("Error updating entry.");
+      } else if (data) {
+        setEntries(entries.map(e => e.id === editingId ? data[0] : e));
+        closeModal();
+      }
+    } else {
+      const { data, error } = await supabase
+        .from('vault_entries')
+        .insert([
+          {
+            user_id: session.user.id,
+            category: newEntry.category,
+            username: newEntry.username,
+            encrypted_data: encryptedStr
+          }
+        ])
+        .select();
+      
+      if (error) {
+        console.error("Insert error:", error.message);
+        alert("Error saving to database. Did you run the SQL schema in Supabase?");
+      } else if (data) {
+        setEntries([...entries, data[0]]);
+        closeModal();
+      }
     }
   };
 
@@ -236,9 +294,15 @@ export default function VaultHub() {
                               {isVisible ? <EyeOff size={16} /> : <Eye size={16} />}
                             </button>
                           </td>
-                          <td>
-                            <button className={`glass-button ${styles.actionBtn}`} onClick={() => handleCopy(decrypted)}>
-                              <Copy size={16} /> Copy
+                          <td className={styles.actionsCell}>
+                            <button className={`glass-button ${styles.actionBtn}`} onClick={() => handleCopy(decrypted)} title="Copy Password">
+                              <Copy size={16} /> <span className={styles.actionText}>Copy</span>
+                            </button>
+                            <button className={`glass-button ${styles.actionBtn}`} onClick={() => openEditModal(entry)} title="Edit Account">
+                              <Edit size={16} /> <span className={styles.actionText}>Edit</span>
+                            </button>
+                            <button className={`glass-button ${styles.actionBtn} ${styles.deleteBtn}`} onClick={() => handleDeleteEntry(entry.id)} title="Delete Account">
+                              <Trash2 size={16} /> <span className={styles.actionText}>Delete</span>
                             </button>
                           </td>
                         </tr>
@@ -252,14 +316,14 @@ export default function VaultHub() {
         )}
 
         {showAddModal && (
-          <div className={styles.modalOverlay} onClick={() => setShowAddModal(false)}>
+          <div className={styles.modalOverlay} onClick={closeModal}>
             <motion.div 
               className={`glass-panel ${styles.modalContent}`}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={e => e.stopPropagation()}
             >
-              <h2>Add New Account</h2>
+              <h2>{editingId ? "Edit Account" : "Add New Account"}</h2>
               
               <select 
                 className={styles.input} 
@@ -299,7 +363,7 @@ export default function VaultHub() {
               )}
 
               <div className={styles.modalActions}>
-                <button className="glass-button" onClick={() => setShowAddModal(false)}>Cancel</button>
+                <button className="glass-button" onClick={closeModal}>Cancel</button>
                 <button className="glass-button" style={{ background: "var(--accent-color)" }} onClick={handleSaveEntry}>Save Encrypted</button>
               </div>
             </motion.div>
